@@ -189,12 +189,8 @@ def main():
             conf_file_path = os.path.abspath(args.config[0])
             pim_globals.MULTICAST_TABLE_ID, pim_globals.UNICAST_TABLE_ID = Config.get_vrfs(conf_file_path)
             start(conf_file_path)
-        except ModuleNotFoundError:
-            print("PYYAML needs to be installed. Execute \"pip3 install pyyaml\"")
-            sys.exit(0)
-        except ImportError:
-            print("PYYAML needs to be installed. Execute \"pip3 install pyyaml\"")
-            sys.exit(0)
+        except (ImportError, ModuleNotFoundError):
+            sys.exit("PYYAML needs to be installed. Execute \"pip3 install pyyaml\"")
     elif args.verbose:
         os.system("tail -f {}".format(PROCESS_LOG_STDOUT_FILE.format(pim_globals.MULTICAST_TABLE_ID)))
         sys.exit(0)
