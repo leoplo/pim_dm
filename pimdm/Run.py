@@ -179,10 +179,8 @@ def main():
 
     if args.start:
         start()
-        sys.exit(0)
     elif args.stop:
         client_socket(args)
-        sys.exit(0)
     elif args.config:
         try:
             from pimdm import Config
@@ -190,22 +188,19 @@ def main():
             pim_globals.MULTICAST_TABLE_ID, pim_globals.UNICAST_TABLE_ID = Config.get_vrfs(conf_file_path)
             start(conf_file_path)
         except (ImportError, ModuleNotFoundError):
-            sys.exit("PYYAML needs to be installed. Execute \"pip3 install pyyaml\"")
+            raise Exception("PYYAML needs to be installed. Execute \"pip3 install pyyaml\"")
     elif args.verbose:
         os.system("tail -f {}".format(PROCESS_LOG_STDOUT_FILE.format(pim_globals.MULTICAST_TABLE_ID)))
-        sys.exit(0)
     elif args.multicast_routes:
         if args.ipv4 or not args.ipv6:
             os.system("ip mroute show table " + str(pim_globals.MULTICAST_TABLE_ID))
         elif args.ipv6:
             os.system("ip -6 mroute show table " + str(pim_globals.MULTICAST_TABLE_ID))
-        sys.exit(0)
     elif not is_running():
         print("PIM-DM is not running")
         parser.print_usage()
-        sys.exit(0)
-
-    client_socket(args)
+    else:
+        client_socket(args)
 
 def process_file_path():
     return os.path.join(PROCESS_DIRECTORY, str(pim_globals.MULTICAST_TABLE_ID))
