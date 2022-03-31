@@ -132,7 +132,6 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("-start", "--start", action="store_true", default=False, help="Start PIM")
     group.add_argument("-stop", "--stop", action="store_true", default=False, help="Stop PIM")
-    group.add_argument("-restart", "--restart", action="store_true", default=False, help="Restart PIM")
     group.add_argument("-li", "--list_interfaces", action="store_true", default=False, help="List All PIM Interfaces. "
                                                                                             "Use -4 or -6 to specify IPv4 or IPv6 interfaces.")
     group.add_argument("-ln", "--list_neighbors", action="store_true", default=False, help="List All PIM Neighbors. "
@@ -208,9 +207,6 @@ def main():
     elif args.stop:
         client_socket(args)
         daemon.stop()
-        sys.exit(0)
-    elif args.restart:
-        daemon.restart()
         sys.exit(0)
     elif args.config:
         try:
