@@ -9,7 +9,7 @@ from pimdm.tree import pim_globals
 from pimdm.utils import exit
 
 
-VERSION = "1.4.0"
+VERSION = "1.4.0nxd002"
 PROCESS_DIRECTORY = '/var/run/pim-dm'
 PROCESS_SOCKET = os.path.join(PROCESS_DIRECTORY, 'pim_uds_socket{}')
 PROCESS_LOG_FOLDER = '/var/log/pimdm'
