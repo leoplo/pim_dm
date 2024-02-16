@@ -1,16 +1,25 @@
 import sys
 from setuptools import setup, find_packages, Extension
+from distutils.command.build import build as build_orig
 
-try:
-    from Cython.Build import cythonize
-except ModuleNotFoundError:
-    raise SystemExit("Cython is required. You can install it with pip.")
 
 
 # we only support Python 3 version >= 3.3
 if len(sys.argv) >= 2 and sys.argv[1] == "install" and sys.version_info < (3, 3):
     raise SystemExit("Python 3.3 or higher is required")
 
+class build(build_orig):
+
+    def finalize_options(self):
+        super().finalize_options()
+        if 'sdist' in sys.argv:
+            return
+        try:
+            from Cython.Build import cythonize
+        except ModuleNotFoundError:
+            raise SystemExit("Cython is required. You can install it with pip.")
+        self.distribution.ext_modules = cythonize(self.distribution.ext_modules,
+                                                  language_level=3)
 
 setup(
     name="pim-dm",
@@ -23,6 +32,7 @@ setup(
     author="Pedro Oliveira",
     author_email="pedro.francisco.oliveira@tecnico.ulisboa.pt",
     license="MIT",
+    cmdclass={"build": build},
     install_requires=[
         'PrettyTable',
         'netifaces',
@@ -32,10 +42,11 @@ setup(
         'igmp==1.0.4',
     ],
     packages=find_packages(exclude=["docs"]),
-    ext_modules = cythonize([
-        Extension("pcap_wrapper", ["pcap.pyx"],
-            libraries=["pcap"]),
-    ], language_level=3),
+    ext_modules = [Extension(
+        name="pcap_wrapper",
+        sources = ["pcap.pyx"],
+        libraries=["pcap"],
+    )],
     entry_points={
         "console_scripts": [
             "pim-dm = pimdm.Run:main",
